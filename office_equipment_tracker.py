@@ -79,10 +79,10 @@ def app():
     # --- Sidebar: Tambah barang baru ---
     st.sidebar.header("➕ Tambah Barang Baru")
     with st.sidebar.form("add_form"):
-        item_id = st.text_input("ID Barang")
-        item_name = st.text_input("Nama Barang")
-        location = st.text_input("Lokasi")
-        quantity = st.number_input("Jumlah", min_value=1, step=1)
+        id_barang = st.text_input("ID Barang")
+        nama_barang = st.text_input("Nama Barang")
+        lokasi = st.text_input("Lokasi")
+        jumlah = st.number_input("Jumlah", min_value=1, step=1)
         status = st.selectbox("Status", ["Tersedia", "Dipinjam", "Rusak", "Tidak tersedia"])
         submitted = st.form_submit_button("Tambah Barang")
 
