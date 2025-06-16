@@ -9,8 +9,6 @@ SUPABASE_URL = st.secrets["SUPABASE_URL"]
 SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-DEFAULT_COLUMNS = ["ID Barang", "Nama Barang", "Lokasi", "Jumlah", "Status"]
-
 # --- Autentikasi ---
 def login():
     if "logged_in" not in st.session_state:
@@ -39,10 +37,8 @@ def load_data():
         result = supabase.table("inventory").select("*").execute()
         df = pd.DataFrame(result.data)
 
-        # Tampilkan kolom yang tersedia untuk debugging
         st.write("📋 Kolom dari database:", df.columns.tolist())
 
-        # Validasi kolom penting
         required_columns = ["id_barang", "nama_barang", "lokasi", "jumlah", "status"]
         missing = [col for col in required_columns if col not in df.columns]
         if missing:
@@ -56,13 +52,7 @@ def load_data():
 
 # --- Simpan data ke Supabase ---
 def insert_item(item):
-    supabase.table("inventory").insert({
-        "id_barang": item["ID Barang"],
-        "nama_barang": item["Nama Barang"],
-        "lokasi": item["Lokasi"],
-        "jumlah": item["Jumlah"],
-        "status": item["Status"]
-    }).execute()
+    supabase.table("inventory").insert(item).execute()
 
 # --- Hapus data dari Supabase ---
 def delete_item(item_id):
@@ -87,15 +77,15 @@ def app():
         submitted = st.form_submit_button("Tambah Barang")
 
         if submitted:
-            if not item_id.isdigit() or len(item_id) < 5:
+            if not id_barang.isdigit() or len(id_barang) < 5:
                 st.warning("ID Barang harus berupa angka dengan minimal 5 digit.")
-            elif item_id and item_name and location:
+            elif id_barang and nama_barang and lokasi:
                 new_row = {
-                    "ID Barang": id_barang,
-                    "Nama Barang": nama_barang,
-                    "Lokasi": lokasi,
-                    "Jumlah": jumlah,
-                    "Status": status
+                    "id_barang": id_barang,
+                    "nama_barang": nama_barang,
+                    "lokasi": lokasi,
+                    "jumlah": jumlah,
+                    "status": status
                 }
                 insert_item(new_row)
                 st.success("Barang baru berhasil ditambahkan! Silakan refresh halaman.")
