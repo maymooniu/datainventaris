@@ -37,7 +37,7 @@ def load_data():
         result = supabase.table("inventory").select("*").execute()
         df = pd.DataFrame(result.data)
 
-        st.write("📋 Kolom dari database:", df.columns.tolist())
+        # st.write("📋 Kolom dari database:", df.columns.tolist())
 
         required_columns = ["id_barang", "nama_barang", "lokasi", "jumlah", "status"]
         missing = [col for col in required_columns if col not in df.columns]
