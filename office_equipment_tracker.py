@@ -3,7 +3,6 @@
 import streamlit as st
 import pandas as pd
 from supabase import create_client, Client
-import os
 
 # --- Supabase Setup ---
 SUPABASE_URL = st.secrets["SUPABASE_URL"]
@@ -36,8 +35,24 @@ def login():
 
 # --- Load data dari Supabase ---
 def load_data():
-    result = supabase.table("inventory").select("*").execute()
-    return pd.DataFrame(result.data)
+    try:
+        result = supabase.table("inventory").select("*").execute()
+        df = pd.DataFrame(result.data)
+
+        # Tampilkan kolom yang tersedia untuk debugging
+        st.write("📋 Kolom dari database:", df.columns.tolist())
+
+        # Validasi kolom penting
+        required_columns = ["id_barang", "nama_barang", "lokasi", "jumlah", "status"]
+        missing = [col for col in required_columns if col not in df.columns]
+        if missing:
+            st.warning(f"⚠️ Kolom berikut tidak ditemukan di database: {missing}")
+
+        return df
+    except Exception as e:
+        st.error("❌ Gagal memuat data dari Supabase.")
+        st.exception(e)
+        return pd.DataFrame()
 
 # --- Simpan data ke Supabase ---
 def insert_item(item):
@@ -58,7 +73,6 @@ def app():
     st.set_page_config(page_title="Pelacak Inventaris Kantor", layout="wide")
 
     login()
-
     st.title("🏢 Pelacak Inventaris Kantor")
     df = load_data()
 
@@ -98,6 +112,10 @@ def app():
     # --- Tampilan utama ---
     st.subheader("📋 Daftar Inventaris")
     search_query = st.text_input("🔍 Cari berdasarkan ID atau Nama Barang")
+
+    if df.empty:
+        st.warning("Tidak ada data inventaris untuk ditampilkan.")
+        return
 
     filter_col1, filter_col2 = st.columns(2)
     with filter_col1:
