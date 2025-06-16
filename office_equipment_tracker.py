@@ -2,37 +2,15 @@
 
 import streamlit as st
 import pandas as pd
-import sqlite3
+from supabase import create_client, Client
 import os
 
-# --- Konstanta ---
-DB_FILE = "office_equipment.db"
-DEFAULT_COLUMNS = ["ID Barang", "Nama Barang", "Lokasi", "Jumlah", "Status"]
+# --- Supabase Setup ---
+SUPABASE_URL = st.secrets["SUPABASE_URL"]
+SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# --- Inisialisasi Database ---
-def init_db():
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS inventory (
-            id_barang TEXT PRIMARY KEY,
-            nama_barang TEXT,
-            lokasi TEXT,
-            jumlah INTEGER,
-            status TEXT
-        )
-    ''')
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS users (
-            username TEXT PRIMARY KEY,
-            password TEXT
-        )
-    ''')
-    cursor.execute("SELECT COUNT(*) FROM users")
-    if cursor.fetchone()[0] == 0:
-        cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", ("admin", "admin123"))
-    conn.commit()
-    conn.close()
+DEFAULT_COLUMNS = ["ID Barang", "Nama Barang", "Lokasi", "Jumlah", "Status"]
 
 # --- Autentikasi ---
 def login():
@@ -46,55 +24,40 @@ def login():
         username = st.text_input("Username")
         password = st.text_input("Password", type="password")
         if st.button("Login"):
-            conn = sqlite3.connect(DB_FILE)
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))
-            if cursor.fetchone():
+            result = supabase.table("users").select("*").eq("username", username).eq("password", password).execute()
+            if result.data:
                 st.session_state.logged_in = True
                 st.session_state.username = username
                 st.success("Login berhasil!")
                 st.rerun()
             else:
                 st.error("Username atau password salah!")
-            conn.close()
         st.stop()
 
-# --- Load data dari DB ---
+# --- Load data dari Supabase ---
 def load_data():
-    conn = sqlite3.connect(DB_FILE)
-    df = pd.read_sql_query("SELECT * FROM inventory", conn)
-    conn.close()
-    return df
+    result = supabase.table("inventory").select("*").execute()
+    return pd.DataFrame(result.data)
 
-# --- Simpan data ke DB ---
+# --- Simpan data ke Supabase ---
 def insert_item(item):
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
-    cursor.execute("""
-        INSERT INTO inventory (id_barang, nama_barang, lokasi, jumlah, status)
-        VALUES (?, ?, ?, ?, ?)
-    """, (item["ID Barang"], item["Nama Barang"], item["Lokasi"], item["Jumlah"], item["Status"]))
-    conn.commit()
-    conn.close()
+    supabase.table("inventory").insert({
+        "id_barang": item["ID Barang"],
+        "nama_barang": item["Nama Barang"],
+        "lokasi": item["Lokasi"],
+        "jumlah": item["Jumlah"],
+        "status": item["Status"]
+    }).execute()
 
+# --- Hapus data dari Supabase ---
 def delete_item(item_id):
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM inventory WHERE id_barang = ?", (item_id,))
-    conn.commit()
-    conn.close()
+    supabase.table("inventory").delete().eq("id_barang", item_id).execute()
 
 # --- Aplikasi Streamlit ---
 def app():
     st.set_page_config(page_title="Pelacak Inventaris Kantor", layout="wide")
 
-    if "logged_in" not in st.session_state:
-        st.session_state.logged_in = False
-    if "username" not in st.session_state:
-        st.session_state.username = ""
-
     login()
-    init_db()
 
     st.title("🏢 Pelacak Inventaris Kantor")
     df = load_data()
