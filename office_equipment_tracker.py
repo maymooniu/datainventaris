@@ -77,9 +77,10 @@ def app():
         submitted = st.form_submit_button("Tambah Barang")
 
         if submitted:
-            if not id_barang.isdigit() or len(id_barang) < 5:
-                st.warning("ID Barang harus berupa angka dengan minimal 5 digit.")
+            if not id_barang.isdigit() or len(id_barang) != 5:
+                st.warning("ID Barang harus berupa 5 digit angka (contoh: 12345).")
             elif id_barang and nama_barang and lokasi:
+
                 new_row = {
                     "id_barang": id_barang,
                     "nama_barang": nama_barang,
