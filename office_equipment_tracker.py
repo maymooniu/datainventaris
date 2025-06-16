@@ -91,10 +91,10 @@ def app():
                 st.warning("ID Barang harus berupa angka dengan minimal 5 digit.")
             elif item_id and item_name and location:
                 new_row = {
-                    "ID Barang": item_id,
-                    "Nama Barang": item_name,
-                    "Lokasi": location,
-                    "Jumlah": quantity,
+                    "ID Barang": id_barang,
+                    "Nama Barang": nama_barang,
+                    "Lokasi": lokasi,
+                    "Jumlah": jumlah,
                     "Status": status
                 }
                 insert_item(new_row)
