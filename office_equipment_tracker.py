@@ -6,8 +6,8 @@ from supabase import create_client, Client
 import os
 
 # --- Supabase Setup ---
-SUPABASE_URL = st.secrets["https://wkdbzoydxaaskewiuqwt.supabase.co"]
-SUPABASE_KEY = st.secrets["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndrZGJ6b3lkeGFhc2tld2l1cXd0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAwNTY4NjMsImV4cCI6MjA2NTYzMjg2M30.CVzGmbCsbdN9od2uaMebP8MHg0WA_uyWMB9mBowTQaE"]
+SUPABASE_URL = st.secrets["SUPABASE_URL"]
+SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 DEFAULT_COLUMNS = ["ID Barang", "Nama Barang", "Lokasi", "Jumlah", "Status"]
