@@ -2,11 +2,3 @@
 headless = true
 port = 8501
 enableCORS = false
-
-[theme]
-base="light"
-primaryColor="#5dade2"  # Biru muda untuk tombol dan elemen interaktif
-backgroundColor="#ffffff"  # Latar belakang utama (halaman) putih
-secondaryBackgroundColor="#d6eaf8"  # Biru muda lembut untuk sidebar
-textColor="#1c1c1c"  # Teks abu gelap
-font="sans serif"
