@@ -102,7 +102,7 @@ def app():
     </style>
     <div class="header-container">
         <div class="header-logo">
-            <img src="datainventaris/Logo_PLN.png" alt="Logo PLN">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/97/Logo_PLN.png" alt="Logo PLN">
         </div>
         <div class="header-title">Pelacak Inventaris Kantor di PT. PLN (Persero) UID Suluttenggo</div>
     </div>
