@@ -157,5 +157,3 @@ def app():
 
 if __name__ == '__main__':
     app()
-
-tambahkan fitur visualisasi yang dulu hilang
