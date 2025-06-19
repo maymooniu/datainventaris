@@ -17,7 +17,7 @@ def login():
         st.session_state.username = ""
 
     if not st.session_state.logged_in:
-        st.set_page_config(page_title="Login Inventaris", layout="centered")
+        st.set_page_config(page_title="Login Inventaris Kantor", layout="wide")
         st.title("🔒 Login Inventaris Kantor")
         username = st.text_input("Username")
         password = st.text_input("Password", type="password")
@@ -60,21 +60,55 @@ def app():
     st.set_page_config(page_title="Pelacak Inventaris Kantor", layout="wide")
     login()
     
-    # === HEADER LOGO + JUDUL ===
-    col_logo, col_title = st.columns([0.1, 0.9])
-    with col_logo:
-        st.image("Logo_PLN.png", width=60)
-    with col_title:
-        st.markdown("""
-        <div style='display: flex; align-items: center; height: 100%;'>
-            <h1 style='margin: 0; padding-left: 10px;'>Pelacak Inventaris Kantor di PT. PLN (Persero) UID Suluttenggo</h1>
-        </div>
-        """, unsafe_allow_html=True)
+    # --- CSS agar tidak overflow ---
+    st.markdown("""
+        <style>
+        .block-container {
+            padding: 1.5rem 3rem;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        </style>
+    """, unsafe_allow_html=True)
 
-    # === LOAD DATA ===
+    # --- HEADER LOGO + JUDUL ---
+    st.markdown("""
+    <style>
+    .header-container {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 10px 0;
+        flex-wrap: wrap;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+    .header-logo img {
+        width: 60px;
+        height: auto;
+    }
+    .header-title {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #111;
+    }
+    @media (max-width: 768px) {
+        .header-title {
+            font-size: 1.4rem;
+        }
+    }
+    </style>
+    <div class="header-container">
+        <div class="header-logo">
+            <img src="Logo_PLN.png" alt="Logo PLN">
+        </div>
+        <div class="header-title">Pelacak Inventaris Kantor di PT. PLN (Persero) UID Suluttenggo</div>
+    </div>
+    """, unsafe_allow_html=True)
+
     df = load_data()
 
-    # === SIDEBAR: TAMBAH BARANG ===
+    # --- Sidebar: Tambah barang baru ---
     st.sidebar.header("➕ Tambah Barang Baru")
     with st.sidebar.form("add_form"):
         id_barang = st.text_input("ID Barang")
@@ -107,7 +141,7 @@ def app():
         st.session_state.username = ""
         st.rerun()
 
-    # === FILTER & SEARCH ===
+    # --- Tampilan utama ---
     st.subheader("📋 Daftar Inventaris")
     search_query = st.text_input("🔍 Cari berdasarkan ID atau Nama Barang")
 
@@ -132,7 +166,6 @@ def app():
     if filter_location != "Semua":
         filtered_df = filtered_df[filtered_df["lokasi"] == filter_location]
 
-    # === HASIL PENCARIAN ===
     st.write("### 📄 Hasil Pencarian")
     page_size = 10
     total_pages = max((len(filtered_df) - 1) // page_size + 1, 1)
@@ -144,11 +177,12 @@ def app():
 
     st.dataframe(paged_df, use_container_width=True)
 
-    # === HAPUS DATA ===
+    # --- Hapus data ---
     st.subheader("🗑️ Hapus Data Inventaris")
     with st.form("delete_form"):
         id_to_delete = st.text_input("Masukkan ID Barang yang ingin dihapus")
         delete_submitted = st.form_submit_button("Hapus Barang")
+
         if delete_submitted:
             if id_to_delete:
                 if id_to_delete in df["id_barang"].astype(str).values:
@@ -162,5 +196,5 @@ def app():
 
     st.download_button("📥 Unduh CSV", data=filtered_df.to_csv(index=False), file_name="inventaris_kantor.csv", mime="text/csv")
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app()
