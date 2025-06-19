@@ -57,18 +57,6 @@ def insert_item(item):
 def delete_item(item_id):
     supabase.table("inventory").delete().eq("id_barang", item_id).execute()
 
-# --- Visualisasi data ---
-def show_visualization(df):
-    st.subheader("📊 Visualisasi Status Inventaris")
-    status_count = df["status"].value_counts()
-
-    fig, ax = plt.subplots(figsize=(5, 3))
-    status_count.plot(kind="bar", ax=ax, color="skyblue")
-    ax.set_xlabel("Status")
-    ax.set_ylabel("Jumlah Barang")
-    ax.set_title("Jumlah Barang per Status")
-    st.pyplot(fig)
-
 # --- Aplikasi Streamlit ---
 def app():
     st.set_page_config(page_title="Pelacak Inventaris Kantor", layout="wide")
@@ -146,9 +134,6 @@ def app():
 
     st.dataframe(paged_df, use_container_width=True)
 
-    # --- Tampilkan visualisasi ---
-    show_visualization(df)
-
     # --- Hapus data ---
     st.subheader("🗑️ Hapus Data Inventaris")
     with st.form("delete_form"):
@@ -166,6 +151,32 @@ def app():
             else:
                 st.warning("Mohon masukkan ID Barang.")
 
+    # --- Visualisasi Pie Chart: Status ---
+    st.subheader("📊 Visualisasi Status Inventaris")
+    status_counts = df["status"].value_counts()
+    if not status_counts.empty:
+        fig1, ax1 = plt.subplots()
+        ax1.pie(status_counts, labels=status_counts.index, autopct="%1.1f%%", startangle=90)
+        ax1.axis("equal")
+        st.pyplot(fig1)
+    else:
+        st.info("Belum ada data untuk visualisasi status.")
+
+    # --- Visualisasi Bar Chart: Jumlah per Lokasi ---
+    st.subheader("🏭 Visualisasi Jumlah Inventaris per Lokasi")
+    lokasi_sums = df.groupby("lokasi")["jumlah"].sum().sort_values(ascending=False)
+    if not lokasi_sums.empty:
+        fig2, ax2 = plt.subplots()
+        ax2.bar(lokasi_sums.index, lokasi_sums.values, color="skyblue")
+        ax2.set_xlabel("Lokasi")
+        ax2.set_ylabel("Total Jumlah")
+        ax2.set_title("Total Barang per Lokasi")
+        plt.xticks(rotation=45)
+        st.pyplot(fig2)
+    else:
+        st.info("Belum ada data untuk visualisasi lokasi.")
+
+    # --- Unduh Data ---
     st.download_button("📥 Unduh CSV", data=filtered_df.to_csv(index=False), file_name="inventaris_kantor.csv", mime="text/csv")
 
 if __name__ == '__main__':
