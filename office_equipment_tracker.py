@@ -151,30 +151,33 @@ def app():
             else:
                 st.warning("Mohon masukkan ID Barang.")
 
-    # --- Visualisasi Pie Chart: Status ---
+       # --- Visualisasi Pie Chart: Status ---
     st.subheader("📊 Visualisasi Status Inventaris")
     status_counts = df["status"].value_counts()
     if not status_counts.empty:
-        fig1, ax1 = plt.subplots(figsize=(3, 1))
-        ax1.pie(status_counts, labels=status_counts.index, autopct="%1.1f%%", startangle=90)
+        fig1, ax1 = plt.subplots(figsize=(4, 4))  # Ukuran kecil
+        ax1.pie(status_counts, labels=status_counts.index, autopct="%1.1f%%", startangle=90, textprops={'fontsize': 8})
         ax1.axis("equal")
         st.pyplot(fig1)
     else:
         st.info("Belum ada data untuk visualisasi status.")
 
-    # --- Visualisasi Bar Chart: Jumlah per Lokasi ---
+
+       # --- Visualisasi Bar Chart: Jumlah per Lokasi ---
     st.subheader("🏭 Visualisasi Jumlah Inventaris per Lokasi")
     lokasi_sums = df.groupby("lokasi")["jumlah"].sum().sort_values(ascending=False)
     if not lokasi_sums.empty:
-        fig2, ax2 = plt.subplots(figsize=(3, 1))
+        fig2, ax2 = plt.subplots(figsize=(6, 3))  # Ukuran lebih kecil dan horizontal
         ax2.bar(lokasi_sums.index, lokasi_sums.values, color="skyblue")
-        ax2.set_xlabel("Lokasi")
-        ax2.set_ylabel("Total Jumlah")
-        ax2.set_title("Total Barang per Lokasi")
-        plt.xticks(rotation=45)
+        ax2.set_xlabel("Lokasi", fontsize=8)
+        ax2.set_ylabel("Total Jumlah", fontsize=8)
+        ax2.set_title("Total Barang per Lokasi", fontsize=10)
+        ax2.tick_params(axis='x', labelrotation=30, labelsize=8)
+        ax2.tick_params(axis='y', labelsize=8)
         st.pyplot(fig2)
     else:
         st.info("Belum ada data untuk visualisasi lokasi.")
+
 
     # --- Unduh Data ---
     st.download_button("📥 Unduh CSV", data=filtered_df.to_csv(index=False), file_name="inventaris_kantor.csv", mime="text/csv")
