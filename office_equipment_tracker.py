@@ -17,6 +17,7 @@ def login():
         st.session_state.username = ""
 
     if not st.session_state.logged_in:
+        st.set_page_config(page_title="Login Inventaris Kantor", layout="wide")
         st.title("🔒 Login Inventaris Kantor")
         username = st.text_input("Username")
         password = st.text_input("Password", type="password")
@@ -57,40 +58,19 @@ def delete_item(item_id):
 # --- Aplikasi Streamlit ---
 def app():
     st.set_page_config(page_title="Pelacak Inventaris Kantor", layout="wide")
-
-    # Fix CSS agar dashboard tidak overflow walau sidebar diperbesar
-    st.markdown("""
-        <style>
-            /* Cegah overflow horizontal dan set max width konten utama */
-            .main {
-                max-width: 100%;
-                overflow-x: hidden;
-            }
-
-            .block-container {
-                max-width: 1200px;
-                margin: auto;
-            }
-
-            /* Responsive elemen input */
-            .stTextInput > div, .stSelectbox > div, .stNumberInput > div {
-                width: 100% !important;
-                max-width: 100%;
-            }
-
-            /* Tabel scrollable jika perlu */
-            .element-container:has(.stDataFrame) {
-                max-width: 100vw;
-                overflow-x: auto;
-            }
-        </style>
-    """, unsafe_allow_html=True)
-
     login()
-    st.title("🏢 Pelacak Inventaris Kantor")
+
+    # --- Header dengan logo dan judul
+    col_logo, col_title = st.columns([1, 6])
+    with col_logo:
+        st.image("Logo_PLN.png", width=70)
+    with col_title:
+        st.markdown("<h1 style='margin-bottom: 0;'>Pelacak Inventaris Kantor</h1>", unsafe_allow_html=True)
+
     df = load_data()
 
     # --- Sidebar: Tambah barang baru ---
+    # st.sidebar.image("Logo_PLN.png", width=100)  # Opsional: Tampilkan juga di sidebar
     st.sidebar.header("➕ Tambah Barang Baru")
     with st.sidebar.form("add_form"):
         id_barang = st.text_input("ID Barang")
@@ -177,6 +157,7 @@ def app():
                 st.warning("Mohon masukkan ID Barang.")
 
     st.download_button("📥 Unduh CSV", data=filtered_df.to_csv(index=False), file_name="inventaris_kantor.csv", mime="text/csv")
+
 
 if __name__ == '__main__':
     app()
