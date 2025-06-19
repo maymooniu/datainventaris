@@ -65,7 +65,7 @@ def app():
         <style>
         .block-container {
             padding: 1.5rem 3rem;
-            max-width: 100%;
+            max-width: 80%;
             overflow-x: hidden;
             margin: auto;
         }
