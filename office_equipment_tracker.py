@@ -58,31 +58,33 @@ def delete_item(item_id):
 def app():
     st.set_page_config(page_title="Pelacak Inventaris Kantor", layout="wide")
 
-    # Inject CSS untuk layout dan overflow
-    st.markdown(
-        """
+    # Fix CSS agar dashboard tidak overflow walau sidebar diperbesar
+    st.markdown("""
         <style>
+            /* Cegah overflow horizontal dan set max width konten utama */
             .main {
+                max-width: 100%;
                 overflow-x: hidden;
             }
 
-            .element-container:has(.stDataFrame) {
-                max-width: 100vw;
-                overflow-x: auto;
+            .block-container {
+                max-width: 1200px;
+                margin: auto;
             }
 
+            /* Responsive elemen input */
             .stTextInput > div, .stSelectbox > div, .stNumberInput > div {
                 width: 100% !important;
                 max-width: 100%;
             }
 
-            .css-1kyxreq {
-                overflow-x: auto !important;
+            /* Tabel scrollable jika perlu */
+            .element-container:has(.stDataFrame) {
+                max-width: 100vw;
+                overflow-x: auto;
             }
         </style>
-        """,
-        unsafe_allow_html=True
-    )
+    """, unsafe_allow_html=True)
 
     login()
     st.title("🏢 Pelacak Inventaris Kantor")
@@ -155,11 +157,7 @@ def app():
     end_idx = start_idx + page_size
     paged_df = filtered_df.iloc[start_idx:end_idx]
 
-    # Gunakan container agar tidak overflow
-    with st.container():
-        st.markdown('<div style="overflow-x: auto;">', unsafe_allow_html=True)
-        st.dataframe(paged_df, use_container_width=True, height=350)
-        st.markdown('</div>', unsafe_allow_html=True)
+    st.dataframe(paged_df, use_container_width=True)
 
     # --- Hapus data ---
     st.subheader("🗑️ Hapus Data Inventaris")
