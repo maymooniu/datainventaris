@@ -63,22 +63,6 @@ def app():
     # --- CSS agar tidak overflow ---
     st.markdown("""
         <style>
-        /* Atur semua isi cell tabel agar rata kiri */
-        .stDataFrame div[role="gridcell"] {
-            justify-content: flex-start !important;
-            text-align: left !important;
-        }
-    
-        /* Header juga rata kiri */
-        .stDataFrame div[role="columnheader"] {
-            justify-content: flex-start !important;
-            text-align: left !important;
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
-    st.markdown("""
-        <style>
         .block-container {
             padding: 1.5rem 3rem;
             max-width: 80%;
