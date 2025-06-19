@@ -152,12 +152,19 @@ def app():
                 st.warning("Mohon masukkan ID Barang.")
 
        # --- Visualisasi Pie Chart: Status ---
-    st.subheader("📊 Visualisasi Status Inventaris")
+   st.subheader("📊 Visualisasi Status Inventaris")
     status_counts = df["status"].value_counts()
     if not status_counts.empty:
-        fig1, ax1 = plt.subplots(figsize=(4, 4))  # Ukuran kecil
-        ax1.pie(status_counts, labels=status_counts.index, autopct="%1.1f%%", startangle=90, textprops={'fontsize': 8})
+        fig1, ax1 = plt.subplots(figsize=(3, 3))  # diperkecil
+        ax1.pie(
+            status_counts,
+            labels=status_counts.index,
+            autopct="%1.1f%%",
+            startangle=90,
+            textprops={"fontsize": 6},  # font diperkecil
+        )
         ax1.axis("equal")
+        plt.tight_layout()
         st.pyplot(fig1)
     else:
         st.info("Belum ada data untuk visualisasi status.")
@@ -167,13 +174,14 @@ def app():
     st.subheader("🏭 Visualisasi Jumlah Inventaris per Lokasi")
     lokasi_sums = df.groupby("lokasi")["jumlah"].sum().sort_values(ascending=False)
     if not lokasi_sums.empty:
-        fig2, ax2 = plt.subplots(figsize=(6, 3))  # Ukuran lebih kecil dan horizontal
+        fig2, ax2 = plt.subplots(figsize=(4, 2))  # diperkecil
         ax2.bar(lokasi_sums.index, lokasi_sums.values, color="skyblue")
-        ax2.set_xlabel("Lokasi", fontsize=8)
-        ax2.set_ylabel("Total Jumlah", fontsize=8)
-        ax2.set_title("Total Barang per Lokasi", fontsize=10)
-        ax2.tick_params(axis='x', labelrotation=30, labelsize=8)
-        ax2.tick_params(axis='y', labelsize=8)
+        ax2.set_xlabel("Lokasi", fontsize=6)
+        ax2.set_ylabel("Total Jumlah", fontsize=6)
+        ax2.set_title("Total Barang per Lokasi", fontsize=8)
+        ax2.tick_params(axis='x', labelrotation=45, labelsize=6)
+        ax2.tick_params(axis='y', labelsize=6)
+        plt.tight_layout()
         st.pyplot(fig2)
     else:
         st.info("Belum ada data untuk visualisasi lokasi.")
