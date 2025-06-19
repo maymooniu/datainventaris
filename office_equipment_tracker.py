@@ -82,6 +82,7 @@ def app():
         flex-wrap: wrap;
         max-width: 100%;
         overflow-x: auto;
+        margin: auto;
     }
     .header-logo img {
         width: 60px;
