@@ -3,4 +3,4 @@ pandas
 supabase
 sqlalchemy
 pyodbc
-matplotlib.pyplot
+matplotlib
