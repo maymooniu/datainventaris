@@ -155,7 +155,7 @@ def app():
     st.subheader("📊 Visualisasi Status Inventaris")
     status_counts = df["status"].value_counts()
     if not status_counts.empty:
-        fig1, ax1 = plt.subplots(figsize=(5, 3))
+        fig1, ax1 = plt.subplots(figsize=(3, 1))
         ax1.pie(status_counts, labels=status_counts.index, autopct="%1.1f%%", startangle=90)
         ax1.axis("equal")
         st.pyplot(fig1)
@@ -166,7 +166,7 @@ def app():
     st.subheader("🏭 Visualisasi Jumlah Inventaris per Lokasi")
     lokasi_sums = df.groupby("lokasi")["jumlah"].sum().sort_values(ascending=False)
     if not lokasi_sums.empty:
-        fig2, ax2 = plt.subplots(figsize=(5, 3))
+        fig2, ax2 = plt.subplots(figsize=(3, 1))
         ax2.bar(lokasi_sums.index, lokasi_sums.values, color="skyblue")
         ax2.set_xlabel("Lokasi")
         ax2.set_ylabel("Total Jumlah")
