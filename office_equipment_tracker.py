@@ -17,7 +17,7 @@ def login():
         st.session_state.username = ""
 
     if not st.session_state.logged_in:
-        st.set_page_config(page_title="Login Inventaris Kantor", layout="wide")
+        st.set_page_config(page_title="Login Inventaris", layout="centered")
         st.title("🔒 Login Inventaris Kantor")
         username = st.text_input("Username")
         password = st.text_input("Password", type="password")
@@ -59,18 +59,22 @@ def delete_item(item_id):
 def app():
     st.set_page_config(page_title="Pelacak Inventaris Kantor", layout="wide")
     login()
-
-    # --- Header dengan logo dan judul
-    col_logo, col_title = st.columns([1, 6])
+    
+    # === HEADER LOGO + JUDUL ===
+    col_logo, col_title = st.columns([0.1, 0.9])
     with col_logo:
-        st.image("Logo_PLN.png", width=70)
+        st.image("Logo_PLN.png", width=60)
     with col_title:
-        st.markdown("<h1 style='margin-bottom: 0;'>Pelacak Inventaris Kantor di PT. PLN (Persero) UID Suluttenggo</h1>", unsafe_allow_html=True)
+        st.markdown("""
+        <div style='display: flex; align-items: center; height: 100%;'>
+            <h1 style='margin: 0; padding-left: 10px;'>Pelacak Inventaris Kantor di PT. PLN (Persero) UID Suluttenggo</h1>
+        </div>
+        """, unsafe_allow_html=True)
 
+    # === LOAD DATA ===
     df = load_data()
 
-    # --- Sidebar: Tambah barang baru ---
-    # st.sidebar.image("Logo_PLN.png", width=100)  # Opsional: Tampilkan juga di sidebar
+    # === SIDEBAR: TAMBAH BARANG ===
     st.sidebar.header("➕ Tambah Barang Baru")
     with st.sidebar.form("add_form"):
         id_barang = st.text_input("ID Barang")
@@ -103,7 +107,7 @@ def app():
         st.session_state.username = ""
         st.rerun()
 
-    # --- Tampilan utama ---
+    # === FILTER & SEARCH ===
     st.subheader("📋 Daftar Inventaris")
     search_query = st.text_input("🔍 Cari berdasarkan ID atau Nama Barang")
 
@@ -128,6 +132,7 @@ def app():
     if filter_location != "Semua":
         filtered_df = filtered_df[filtered_df["lokasi"] == filter_location]
 
+    # === HASIL PENCARIAN ===
     st.write("### 📄 Hasil Pencarian")
     page_size = 10
     total_pages = max((len(filtered_df) - 1) // page_size + 1, 1)
@@ -139,12 +144,11 @@ def app():
 
     st.dataframe(paged_df, use_container_width=True)
 
-    # --- Hapus data ---
+    # === HAPUS DATA ===
     st.subheader("🗑️ Hapus Data Inventaris")
     with st.form("delete_form"):
         id_to_delete = st.text_input("Masukkan ID Barang yang ingin dihapus")
         delete_submitted = st.form_submit_button("Hapus Barang")
-
         if delete_submitted:
             if id_to_delete:
                 if id_to_delete in df["id_barang"].astype(str).values:
@@ -158,6 +162,5 @@ def app():
 
     st.download_button("📥 Unduh CSV", data=filtered_df.to_csv(index=False), file_name="inventaris_kantor.csv", mime="text/csv")
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app()
