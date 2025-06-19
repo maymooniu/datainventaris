@@ -37,8 +37,6 @@ def load_data():
         result = supabase.table("inventory").select("*").execute()
         df = pd.DataFrame(result.data)
 
-        # st.write("📋 Kolom dari database:", df.columns.tolist())
-
         required_columns = ["id_barang", "nama_barang", "lokasi", "jumlah", "status"]
         missing = [col for col in required_columns if col not in df.columns]
         if missing:
@@ -62,6 +60,26 @@ def delete_item(item_id):
 def app():
     st.set_page_config(page_title="Pelacak Inventaris Kantor", layout="wide")
 
+    # --- Tambahan untuk menyesuaikan ukuran tampilan ---
+    st.markdown(
+        """
+        <style>
+            .main {
+                max-width: 100vw;
+                overflow-x: hidden;
+            }
+            input, select, textarea {
+                max-width: 100%;
+                width: 100%;
+            }
+            section.main > div {
+                overflow-x: hidden;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
     login()
     st.title("🏢 Pelacak Inventaris Kantor")
     df = load_data()
@@ -80,7 +98,6 @@ def app():
             if not id_barang.isdigit() or len(id_barang) != 5:
                 st.warning("ID Barang harus berupa 5 digit angka (contoh: 12345).")
             elif id_barang and nama_barang and lokasi:
-
                 new_row = {
                     "id_barang": id_barang,
                     "nama_barang": nama_barang,
@@ -108,7 +125,7 @@ def app():
         st.warning("Tidak ada data inventaris untuk ditampilkan.")
         return
 
-    filter_col1, filter_col2 = st.columns(2)
+    filter_col1, filter_col2 = st.columns([1, 1])
     with filter_col1:
         filter_status = st.selectbox("Filter Status", ["Semua"] + df["status"].dropna().unique().tolist())
     with filter_col2:
