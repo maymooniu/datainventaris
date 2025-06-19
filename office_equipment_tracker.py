@@ -36,12 +36,10 @@ def load_data():
     try:
         result = supabase.table("inventory").select("*").execute()
         df = pd.DataFrame(result.data)
-
         required_columns = ["id_barang", "nama_barang", "lokasi", "jumlah", "status"]
         missing = [col for col in required_columns if col not in df.columns]
         if missing:
             st.warning(f"⚠️ Kolom berikut tidak ditemukan di database: {missing}")
-
         return df
     except Exception as e:
         st.error("❌ Gagal memuat data dari Supabase.")
@@ -60,20 +58,26 @@ def delete_item(item_id):
 def app():
     st.set_page_config(page_title="Pelacak Inventaris Kantor", layout="wide")
 
-    # --- Tambahan untuk menyesuaikan ukuran tampilan ---
+    # Inject CSS untuk layout dan overflow
     st.markdown(
         """
         <style>
             .main {
+                overflow-x: hidden;
+            }
+
+            .element-container:has(.stDataFrame) {
                 max-width: 100vw;
-                overflow-x: hidden;
+                overflow-x: auto;
             }
-            input, select, textarea {
+
+            .stTextInput > div, .stSelectbox > div, .stNumberInput > div {
+                width: 100% !important;
                 max-width: 100%;
-                width: 100%;
             }
-            section.main > div {
-                overflow-x: hidden;
+
+            .css-1kyxreq {
+                overflow-x: auto !important;
             }
         </style>
         """,
@@ -125,7 +129,7 @@ def app():
         st.warning("Tidak ada data inventaris untuk ditampilkan.")
         return
 
-    filter_col1, filter_col2 = st.columns([1, 1])
+    filter_col1, filter_col2 = st.columns(2)
     with filter_col1:
         filter_status = st.selectbox("Filter Status", ["Semua"] + df["status"].dropna().unique().tolist())
     with filter_col2:
@@ -151,7 +155,11 @@ def app():
     end_idx = start_idx + page_size
     paged_df = filtered_df.iloc[start_idx:end_idx]
 
-    st.dataframe(paged_df, use_container_width=True)
+    # Gunakan container agar tidak overflow
+    with st.container():
+        st.markdown('<div style="overflow-x: auto;">', unsafe_allow_html=True)
+        st.dataframe(paged_df, use_container_width=True, height=350)
+        st.markdown('</div>', unsafe_allow_html=True)
 
     # --- Hapus data ---
     st.subheader("🗑️ Hapus Data Inventaris")
