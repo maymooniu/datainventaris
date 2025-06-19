@@ -152,7 +152,7 @@ def app():
                 st.warning("Mohon masukkan ID Barang.")
 
        # --- Visualisasi Pie Chart: Status ---
-   st.subheader("📊 Visualisasi Status Inventaris")
+    st.subheader("📊 Visualisasi Status Inventaris")
     status_counts = df["status"].value_counts()
     if not status_counts.empty:
         fig1, ax1 = plt.subplots(figsize=(3, 3))  # diperkecil
