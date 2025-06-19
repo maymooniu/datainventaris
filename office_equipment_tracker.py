@@ -67,6 +67,7 @@ def app():
             padding: 1.5rem 3rem;
             max-width: 100%;
             overflow-x: hidden;
+            margin: auto;
         }
         </style>
     """, unsafe_allow_html=True)
