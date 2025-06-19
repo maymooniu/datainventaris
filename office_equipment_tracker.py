@@ -65,7 +65,7 @@ def app():
     with col_logo:
         st.image("Logo_PLN.png", width=70)
     with col_title:
-        st.markdown("<h1 style='margin-bottom: 0;'>Pelacak Inventaris Kantor</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='margin-bottom: 0;'>Pelacak Inventaris Kantor di PT. PLN (Persero) UID Suluttenggo</h1>", unsafe_allow_html=True)
 
     df = load_data()
 
